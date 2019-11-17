@@ -35,3 +35,8 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::manda(QString msg){
     Client->send(msg);
 }
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    registation->show();
+}

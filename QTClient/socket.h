@@ -12,6 +12,7 @@ public:
     QTcpSocket *client;
     bool connect(QString indirizzo, quint16 porta);
     void send(QString msg);
+    void sendJson();
 };
 
 #endif // SOCKET_H

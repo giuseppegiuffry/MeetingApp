@@ -28,13 +28,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     socket.cpp \
-    home.cpp
+    home.cpp \
+    registration.cpp
 
 HEADERS += \
         mainwindow.h \
     socket.h \
-    home.h
+    home.h \
+    registration.h
 
 FORMS += \
         mainwindow.ui \
-    home.ui
+    home.ui \
+    registration.ui

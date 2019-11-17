@@ -28,3 +28,7 @@ void socket::send(QString msg){
     client->write(mess);
     client->waitForBytesWritten(1000);
 }
+
+void socket::sendJson(){
+    qDebug() << "implementare sendJson";
+}
