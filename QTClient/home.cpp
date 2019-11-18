@@ -15,6 +15,9 @@ Home::~Home()
 
 void Home::on_pushButton_clicked()
 {
-
     emit(send_msg(ui->msg->text()));
+}
+
+void Home::on_lineEdit_editingFinished(){
+
 }

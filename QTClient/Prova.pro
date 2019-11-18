@@ -26,18 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     socket.cpp \
     home.cpp \
-    registration.cpp
+    registration.cpp \
+    login.cpp
 
 HEADERS += \
-        mainwindow.h \
     socket.h \
     home.h \
-    registration.h
+    registration.h \
+    login.h
 
 FORMS += \
-        mainwindow.ui \
     home.ui \
-    registration.ui
+    registration.ui \
+    login.ui

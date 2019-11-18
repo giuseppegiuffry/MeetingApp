@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "login.h"
 #include "ui_mainwindow.h"
 #include "QTcpSocket"
 #include "QDebug"
@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-
+    delete ui;
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -24,7 +24,11 @@ void MainWindow::on_pushButton_clicked()
         connect(home,SIGNAL(send_msg(QString)),this,SLOT(manda(QString)));
     }
     else QMessageBox::about(this,"Errore","Non Connesso");
+}
 
+void MainWindow::on_pushButton_2_clicked()
+{
+    registation->show();
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -36,7 +40,4 @@ void MainWindow::manda(QString msg){
     Client->send(msg);
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-    registation->show();
-}
+
