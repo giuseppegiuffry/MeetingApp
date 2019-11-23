@@ -1,20 +1,20 @@
 #include "socket.h"
 
-socket::socket()
+socket::socket(QString ind, uint16_t port)
 {
-    client = new QTcpSocket();
+    indirizzo = ind;
+    porta = port;
 }
 
-
-bool socket::connect(QString indirizzo, quint16 porta){
-    client->connectToHost(indirizzo,porta);
-    if (client->waitForConnected(3000)){
+bool socket::connect(QJsonObject user){
+    connectToHost(indirizzo,porta);
+    if (waitForConnected(1000)){
         qDebug() << "connesso";
-        client->waitForReadyRead(3000);
-        qDebug() << "Reading: " <<client->bytesAvailable();
-        qDebug() << client->readAll();
+        QDataStream clientstream(this);
+        clientstream << QJsonDocument(user).toJson(QJsonDocument::Compact);
+        readyRead();
         return true;
-      //  client->close();
+      //close();
     }
     else {
         return false;
@@ -22,15 +22,21 @@ bool socket::connect(QString indirizzo, quint16 porta){
     }
 }
 
-void socket::send(QString msg){
-    QByteArray ba = msg.toLocal8Bit();
-    const char *mess = ba.data();
-    client->write(mess);
-    client->waitForBytesWritten(1000);
+void socket::send(QJsonObject msg){
+    QDataStream clientstream(this);
+    clientstream << QJsonDocument(msg).toJson(QJsonDocument::Compact);
+    qDebug() << "dovrei mandare un msg";
 }
 
-void socket::reg(QJsonObject user){
-    QDataStream clientstream(client);
+bool socket::reg(QJsonObject user){
+    connectToHost(indirizzo,porta);
+    if(waitForConnected())
+    {
+    qDebug() << "connesso";
+    QDataStream clientstream(this);
     clientstream << QJsonDocument(user).toJson(QJsonDocument::Compact);
     qDebug() << "dovrei mandare un Json al server";
+    return true;
+    }
+    else return false;
 }

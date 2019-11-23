@@ -29,13 +29,15 @@ SOURCES += \
     socket.cpp \
     home.cpp \
     registration.cpp \
-    login.cpp
+    login.cpp \
+    rcvthread.cpp
 
 HEADERS += \
     socket.h \
     home.h \
     registration.h \
-    login.h
+    login.h \
+    rcvthread.h
 
 FORMS += \
     home.ui \

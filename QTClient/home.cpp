@@ -15,9 +15,23 @@ Home::~Home()
 
 void Home::on_pushButton_clicked()
 {
-    emit(send_msg(ui->msg->text()));
+    QString message = ui->msg->text();
+    ui->msg->clear();
+    if(message.isEmpty())
+        return;
+    else{
+        JsonMsg.insert("user_name",QJsonValue::fromVariant(nome_mittente));
+        JsonMsg.insert("msg",QJsonValue::fromVariant(message));
+        emit(send_msg(JsonMsg));
+        message = nome_mittente + ": " + message;
+        ui->com->addItem(message);
+    }
 }
 
 void Home::on_lineEdit_editingFinished(){
 
+}
+
+void Home::receive_user(QString user1){
+    nome_mittente = user1;
 }

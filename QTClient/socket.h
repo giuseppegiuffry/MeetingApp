@@ -8,14 +8,17 @@
 #include "QJsonObject"
 #include "QDataStream"
 
-class socket
+class socket : public QTcpSocket
 {
 public:
-    socket();
-    QTcpSocket *client;
-    bool connect(QString indirizzo, quint16 porta);
-    void send(QString msg);
-    void reg(QJsonObject user);
+    socket(QString ind, uint16_t port);
+    bool connect(QJsonObject user);
+    void send(QJsonObject msg);
+    bool reg(QJsonObject user);
+
+private:
+    QString indirizzo;
+    uint16_t porta;
 };
 
 #endif // SOCKET_H

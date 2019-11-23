@@ -23,13 +23,14 @@ void Registration::on_Registra_clicked()
         QMessageBox::about(this,"Warning","Riempire tutti i campi");
     else
     {
-        if(Signin->connect("127.0.0.2",8888)){
-            getInfo();
+        getInfo();
+        qDebug() << user;
+        if(Signin->reg(user)){
             qDebug() << user;
-            Signin->reg(user);//mandare Json con dati registrazione
-            Signin->client->waitForReadyRead(3000);
+            Signin->waitForReadyRead(100);
             //implementare ifelse per comunicare se la registrazione è andata a buon fine oppure no
-            Signin->client->close();
+            Signin->close();
+            this->close();
         }
         else
             QMessageBox::about(this,"Errore","Non Connesso");

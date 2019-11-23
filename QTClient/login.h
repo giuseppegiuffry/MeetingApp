@@ -6,6 +6,9 @@
 #include "QtGlobal"
 #include "home.h"
 #include "registration.h"
+#include "QJsonDocument"
+#include "QJsonObject"
+#include "rcvthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,14 +29,18 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    socket *Client = new socket();
+    socket *Client = new socket("127.0.0.1",8888);
     Home *home = new Home();
     Registration *registation = new Registration();
+    QJsonObject user;
+    RcvThread thread;
 signals:
+    void give_user(QString);
 
 private slots:
-    void manda(QString);
+    void manda(QJsonObject msg);
     void on_pushButton_2_clicked();
+    void json_received(QJsonObject);
 };
 
 #endif // MAINWINDOW_H
