@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(home,SIGNAL(send_msg(QJsonObject)),this,SLOT(manda(QJsonObject)));
     connect(this,SIGNAL(give_user(QString)),home,SLOT(receive_user(QString)));
-    thread.run(Client);
+    connect(Client,SIGNAL(readyRead()),this,SLOT(OnReadyRead()));
+    connect(this,SIGNAL(parse_msg(QString,QString)),home,SLOT(receive_msg(QString,QString)));
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +59,44 @@ void MainWindow::manda(QJsonObject msg)
 void MainWindow::json_received(QJsonObject msg)
 {
     qDebug() << msg;
+}
+
+void MainWindow::OnReadyRead()
+{
+    qDebug() << "sono entrato nella readyread";
+    QByteArray jsonData;
+    QDataStream socketStream(Client);
+    for (;;) {
+        socketStream.startTransaction();
+        socketStream >> jsonData;
+        if (socketStream.commitTransaction()) {
+            QJsonParseError parseError;
+            const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                if (jsonDoc.isObject())
+                    qDebug() << "json letto correttamente";
+                    JsonArrivato(jsonDoc.object());
+            }
+        } else {
+            qDebug() << "uscie";
+            break;
+        }
+    }
+}
+
+void MainWindow::JsonArrivato(const QJsonObject &json)
+{
+    qDebug() << json;
+    const QJsonValue typeval = json.value(QLatin1String("msg"));
+    if(typeval.isNull() || !typeval.isString())
+        return;
+    const QJsonValue textVal = json.value(QLatin1String("msg"));
+    const QJsonValue senderVal = json.value(QLatin1String("user_name"));
+    if (textVal.isNull() || !textVal.isString())
+        return; // the text field was invalid so we ignore
+    if (senderVal.isNull() || !senderVal.isString())
+        return; // the sender field was invalid so we ignore
+    emit parse_msg(senderVal.toString(),textVal.toString());
 }
 
 

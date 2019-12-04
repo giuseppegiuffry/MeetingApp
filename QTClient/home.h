@@ -22,9 +22,11 @@ public:
 
 private:
     QString nome_mittente;
+    QString other_user;
 
 public slots:
     void receive_user(QString);
+    void receive_msg(QString other_user, QString msg);
 
 private slots:
     void on_lineEdit_editingFinished();

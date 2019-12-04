@@ -35,3 +35,10 @@ void Home::on_lineEdit_editingFinished(){
 void Home::receive_user(QString user1){
     nome_mittente = user1;
 }
+
+void Home::receive_msg(QString other_user, QString msg){
+   this->other_user = other_user;
+   QString message = msg;
+   message = other_user + ": " + message;
+   ui->com->addItem(message);
+}

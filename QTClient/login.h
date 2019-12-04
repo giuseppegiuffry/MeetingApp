@@ -8,7 +8,6 @@
 #include "registration.h"
 #include "QJsonDocument"
 #include "QJsonObject"
-#include "rcvthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,18 +28,21 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    socket *Client = new socket("127.0.0.1",8888);
+    socket *Client = new socket("127.0.0.3",8888);
     Home *home = new Home();
     Registration *registation = new Registration();
     QJsonObject user;
-    RcvThread thread;
+    void JsonArrivato(const QJsonObject &json);
+
 signals:
     void give_user(QString);
+    void parse_msg(QString, QString);
 
 private slots:
     void manda(QJsonObject msg);
     void on_pushButton_2_clicked();
     void json_received(QJsonObject);
+    void OnReadyRead();
 };
 
 #endif // MAINWINDOW_H
