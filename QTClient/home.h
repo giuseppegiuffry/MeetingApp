@@ -29,7 +29,6 @@ public slots:
     void receive_msg(QString other_user, QString msg);
 
 private slots:
-    void on_lineEdit_editingFinished();
 
     void on_pushButton_clicked();
 

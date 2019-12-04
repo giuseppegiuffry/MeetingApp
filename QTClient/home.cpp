@@ -28,9 +28,6 @@ void Home::on_pushButton_clicked()
     }
 }
 
-void Home::on_lineEdit_editingFinished(){
-
-}
 
 void Home::receive_user(QString user1){
     nome_mittente = user1;

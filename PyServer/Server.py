@@ -1,29 +1,40 @@
 import socket
 import sys
+from _thread import *
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-server_address = ('127.0.0.3',8888)
+server_address = ('127.0.0.1', 8888)
 print ('Il server sta partendo con indirizzo e porta')
 sock.bind(server_address)
 
-sock.listen(2)
+sock.listen(5)
+
+print("In attesa di connessioni...")
+
 clients = []
 
-while True:
-    print("In attesa di connessioni")
-    connection, client_address = sock.accept()
-    try:
-        print('connessione da,')
+def clientThread(connection):
+    while True:
+        data = connection.recv(1024)
+        # print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
+        if data:
+            print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
+            print('\nRimando al client')
+            connection.sendall(data)
+        else:
+            print('\nNessun messaggio ricevuto')
+            print("Il client " + client_address[0] + ":" + str(client_address[1]) + " è offline")
+            break
 
-        while True:
-            data = connection.recv(1024)
-            print('Dati ricevuti:{}'.format(data))
-            if data:
-                print('rimando al client')
-                connection.sendall(data)
-            else:
-                print('nessun dato')
-                break
-    finally:
-        connection.close()
+    connection.close()
+    
+    
+while True:
+    connection, client_address = sock.accept()
+    
+    print("\nConnesso con " + client_address[0] + ":" + str(client_address[1]))
+    start_new_thread(clientThread, (connection,))
+    
+
+sock.close()

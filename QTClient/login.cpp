@@ -1,5 +1,5 @@
 #include "login.h"
-#include "ui_mainwindow.h"
+#include "ui_login.h"
 #include "QTcpSocket"
 #include "QDebug"
 #include "socket.h"
