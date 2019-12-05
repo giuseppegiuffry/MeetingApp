@@ -1,40 +1,51 @@
 import socket
 import sys
-from _thread import *
+from threading import Thread
+import json
 
-sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-server_address = ('127.0.0.1', 8888)
-print ('Il server sta partendo con indirizzo e porta')
-sock.bind(server_address)
+def accept_connections():
+    while True:
+        connection, client_address = sock.accept()
+        print("\nConnesso con " + client_address[0] + ":" + str(client_address[1]))
+        addresses[connection] = client_address
+        Thread(target=clientThread,args=(connection,client_address,)).start()
 
-sock.listen(5)
 
-print("In attesa di connessioni...")
-
-clients = []
-
-def clientThread(connection):
+def clientThread(connection,client_address):
     while True:
         data = connection.recv(1024)
         # print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
         if data:
             print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
             print('\nRimando al client')
-            connection.sendall(data)
+            for address in addresses:
+                if (address != client_address):
+                        address.sendall(data)
         else:
-            print('\nNessun messaggio ricevuto')
-            print("Il client " + client_address[0] + ":" + str(client_address[1]) + " è offline")
+            print('\nclient disconnesso')
+            connection.close()
+            del addresses[connection]
             break
 
     connection.close()
-    
-    
-while True:
-    connection, client_address = sock.accept()
-    
-    print("\nConnesso con " + client_address[0] + ":" + str(client_address[1]))
-    start_new_thread(clientThread, (connection,))
-    
 
-sock.close()
+def broadcast(messaggio):
+    for sock in clients:
+        sock.sendall(messaggio)
+
+
+sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+server_address = ('127.0.0.2', 8888)
+sock.bind(server_address)
+
+clients = {}
+addresses = {}
+
+if __name__ == "__main__":
+    sock.listen(5)
+    print("In attesa di connessioni...")
+    thread_connessioni = Thread(target=accept_connections)
+    thread_connessioni.start()
+    thread_connessioni.join()
+    sock.close()
