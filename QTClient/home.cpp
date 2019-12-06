@@ -23,14 +23,19 @@ void Home::on_pushButton_clicked()
         JsonMsg.insert("user_name",QJsonValue::fromVariant(nome_mittente));
         JsonMsg.insert("msg",QJsonValue::fromVariant(message));
         emit(send_msg(JsonMsg));
-        message = nome_mittente + ": " + message;
-        ui->com->addItem(message);
+
+        // allineo a destra il messaggio che mando
+        QListWidgetItem *messageItem = new QListWidgetItem(nome_mittente + ": " + message);
+        ui->com->addItem(messageItem);
+        messageItem->setTextAlignment(Qt::AlignRight);
+
         ui->com->scrollToBottom();
     }
 }
 
 
 void Home::receive_user(QString user1){
+
     nome_mittente = user1;
 }
 
