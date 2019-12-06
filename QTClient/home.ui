@@ -13,34 +13,38 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget_2">
+  <widget class="QListWidget" name="com">
    <property name="geometry">
     <rect>
-     <x>-1</x>
-     <y>9</y>
-     <width>401</width>
-     <height>291</height>
+     <x>10</x>
+     <y>11</y>
+     <width>381</width>
+     <height>251</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <item>
-     <widget class="QListWidget" name="com"/>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QLineEdit" name="msg"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Manda</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
+  </widget>
+  <widget class="QLineEdit" name="msg">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>291</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>270</y>
+     <width>80</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Invia</string>
+   </property>
   </widget>
  </widget>
  <resources/>

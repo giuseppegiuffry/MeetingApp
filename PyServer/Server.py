@@ -8,7 +8,8 @@ def accept_connections():
     while True:
         connection, client_address = sock.accept()
         print("\nConnesso con " + client_address[0] + ":" + str(client_address[1]))
-        addresses[connection] = client_address
+        clients[connection.fileno()] = connection
+        # addresses[connection] = client_address
         Thread(target=clientThread,args=(connection,client_address,)).start()
 
 
@@ -19,13 +20,14 @@ def clientThread(connection,client_address):
         if data:
             print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
             print('\nRimando al client')
-            for address in addresses:
-                if (address != client_address):
-                        address.sendall(data)
+            for client in clients.values():
+                if (client != connection):
+                    client.sendall(data)
         else:
-            print('\nclient disconnesso')
+            print('\nClient disconnesso')
+            del clients[connection.fileno()]
             connection.close()
-            del addresses[connection]
+            # del addresses[connection]
             break
 
     connection.close()
@@ -36,7 +38,7 @@ def broadcast(messaggio):
 
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server_address = ('127.0.0.2', 8888)
+server_address = ('127.0.0.1', 8888)
 sock.bind(server_address)
 
 clients = {}

@@ -25,6 +25,7 @@ void Home::on_pushButton_clicked()
         emit(send_msg(JsonMsg));
         message = nome_mittente + ": " + message;
         ui->com->addItem(message);
+        ui->com->scrollToBottom();
     }
 }
 
@@ -38,4 +39,5 @@ void Home::receive_msg(QString other_user, QString msg){
    QString message = msg;
    message = other_user + ": " + message;
    ui->com->addItem(message);
+   ui->com->scrollToBottom();
 }
