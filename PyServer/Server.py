@@ -17,15 +17,50 @@ def accept_connections():
 def clientThread(connection,client_address):
     while True:
         data = connection.recv(1024)
-        encode = json.dumps(data)
-        jdata = json.loads(encode.decode("utf-8"))
+        db = sqlite3.connect('database.db')
+        c = db.cursor()
         # print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
         if data:
+            temp = data.decode("utf-8")
+            temp = temp[4:]
+            jdata = json.loads(temp)
             print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
-            print('\nRimando al client')
-            for client in clients.values():
-                if (client != connection):
-                    client.sendall(data)
+            if "login" in jdata:
+                account = []
+                account.append(jdata.get("name"))
+                account.append(jdata.get("password"))
+                c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
+                result = c.fetchone() #prendo il risultato del fetch e vedo se non è nullo 
+
+                if result:
+                    print('\nUtente loggato')
+                    #connection.sendall(validation_granted.encode()) queste due rompono la comunicazione!
+                else:
+                    print('\nCredenziali errate')
+                    #connection.sendall(validation_refused.encode()) queste due rompono la comunicazione!
+
+            elif "msg" in jdata:
+                for client in clients.values():
+                    if (client != connection):
+                        client.sendall(data)
+
+            elif "bio" in jdata:
+                print("\nSalvo utente nel database")
+                user = []
+                account = []
+                user.append(jdata.get("name"))
+                user.append(jdata.get("surname"))
+                user.append(jdata.get("sex"))
+                user.append(jdata.get("interested"))
+                user.append(jdata.get("bio"))
+                account.append(jdata.get("nickname"))
+                account.append(jdata.get("password"))
+                c.execute('INSERT INTO user VALUES (?,?,?,?,?)', user)
+                c.execute('INSERT INTO account VALUES(?,?)', account)
+                db.commit()
+            else:
+                print("\nMessaggio non riconosciuto")
+
         else:
             print('\nClient disconnesso')
             del clients[connection.fileno()]
@@ -35,21 +70,18 @@ def clientThread(connection,client_address):
 
     connection.close()
 
-def broadcast(messaggio):
-    for sock in clients:
-        sock.sendall(messaggio)
-
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server_address = ('127.0.0.1', 8888)
+server_address = ('127.0.0.2', 8888)
 sock.bind(server_address)
 
 clients = {}
 addresses = {}
 
+validation_granted = '{"granted":"granted"}'
+validation_refused = '{"granted":"refused"}'
+
 if __name__ == "__main__":
-    db = sqlite3.connect('database.db')
-    c = db.cursor()
     sock.listen(5)
     print("In attesa di connessioni...")
     thread_connessioni = Thread(target=accept_connections)

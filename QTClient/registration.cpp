@@ -39,11 +39,11 @@ void Registration::on_Registra_clicked()
 
 void Registration::getInfo()
 {
-    user.insert("Name",QJsonValue::fromVariant(ui->Nome->text()));
-    user.insert("Surname",QJsonValue::fromVariant(ui->Cognome->text()));
-    user.insert("Nickname",QJsonValue::fromVariant(ui->Nick->text()));
-    user.insert("Password",QJsonValue::fromVariant(ui->Password->text()));
-    user.insert("Sex",QJsonValue::fromVariant(ui->Sesso->currentText()));
-    user.insert("Interested",QJsonValue::fromVariant(ui->Interesse->currentText()));
-    user.insert("Bio",QJsonValue::fromVariant(ui->Bio->toPlainText()));
+    user.insert("name",QJsonValue::fromVariant(ui->Nome->text()));
+    user.insert("surname",QJsonValue::fromVariant(ui->Cognome->text()));
+    user.insert("nickname",QJsonValue::fromVariant(ui->Nick->text()));
+    user.insert("password",QJsonValue::fromVariant(ui->Password->text()));
+    user.insert("sex",QJsonValue::fromVariant(ui->Sesso->currentText()));
+    user.insert("interested",QJsonValue::fromVariant(ui->Interesse->currentText()));
+    user.insert("bio",QJsonValue::fromVariant(ui->Bio->toPlainText()));
 }

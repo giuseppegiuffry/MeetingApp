@@ -27,12 +27,21 @@ void MainWindow::on_pushButton_clicked()
     QString password = ui->username->text();
     if(!username.isEmpty() || !password.isEmpty())
     {
-        user.insert("Name",QJsonValue::fromVariant(username));
-        user.insert("Password",QJsonValue::fromVariant(password));
+        user.insert("login",QJsonValue::fromVariant("login"));
+        user.insert("name",QJsonValue::fromVariant(username));
+        user.insert("password",QJsonValue::fromVariant(password));
         if(Client->connect(user))
         {
-        home->setModal(true);
-        home->show();
+            if(true)
+            {
+                home->setModal(true);
+                home->show();
+            }
+            else
+            {
+                QMessageBox::about(this,"Errore","Dati Errati");
+                Client->close();
+            }
         }
         else QMessageBox::about(this,"Errore","Non Connesso");
         emit(give_user(username));
@@ -98,5 +107,4 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
         return; // the sender field was invalid so we ignore
     emit parse_msg(senderVal.toString(),textVal.toString());
 }
-
 

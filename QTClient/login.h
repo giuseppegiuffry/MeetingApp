@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    socket *Client = new socket("127.0.0.1",8888);
+    socket *Client = new socket("127.0.0.2",8888);
     Home *home = new Home();
     Registration *registation = new Registration();
     QJsonObject user;

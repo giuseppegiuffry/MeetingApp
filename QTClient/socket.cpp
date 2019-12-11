@@ -12,7 +12,6 @@ bool socket::connect(QJsonObject user){
         qDebug() << "connesso";
         QDataStream clientstream(this);
         clientstream << QJsonDocument(user).toJson(QJsonDocument::Compact);
-        readyRead();
         return true;
       //close();
     }
