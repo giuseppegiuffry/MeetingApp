@@ -33,6 +33,9 @@ private:
     Registration *registation = new Registration();
     QJsonObject user;
     void JsonArrivato(const QJsonObject &json);
+    const QString login = "login";
+    const QString msg = "msg";
+    bool connection_granted = false;
 
 signals:
     void give_user(QString);

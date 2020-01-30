@@ -35,7 +35,6 @@ void Home::on_pushButton_clicked()
 
 
 void Home::receive_user(QString user1){
-
     nome_mittente = user1;
 }
 

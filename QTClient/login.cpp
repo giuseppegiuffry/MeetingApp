@@ -32,7 +32,7 @@ void MainWindow::on_pushButton_clicked()
         user.insert("password",QJsonValue::fromVariant(password));
         if(Client->connect(user))
         {
-            if(true)
+            if(connection_granted)
             {
                 home->setModal(true);
                 home->show();
@@ -87,7 +87,7 @@ void MainWindow::OnReadyRead()
                     JsonArrivato(jsonDoc.object());
             }
         } else {
-            qDebug() << "uscie";
+            qDebug() << "Sono Uscito";
             break;
         }
     }
@@ -96,15 +96,17 @@ void MainWindow::OnReadyRead()
 void MainWindow::JsonArrivato(const QJsonObject &json)
 {
     qDebug() << json;
-    const QJsonValue typeval = json.value(QLatin1String("msg"));
-    if(typeval.isNull() || !typeval.isString())
-        return;
-    const QJsonValue textVal = json.value(QLatin1String("msg"));
-    const QJsonValue senderVal = json.value(QLatin1String("user_name"));
-    if (textVal.isNull() || !textVal.isString())
-        return; // the text field was invalid so we ignore
-    if (senderVal.isNull() || !senderVal.isString())
-        return; // the sender field was invalid so we ignore
-    emit parse_msg(senderVal.toString(),textVal.toString());
+    if (json.keys().contains("login")){
+        connection_granted=true;
+    }
+    if (json.keys().contains("msg")){
+        const QJsonValue textVal = json.value(QLatin1String("msg"));
+        const QJsonValue senderVal = json.value(QLatin1String("user_name"));
+            if (textVal.isNull() || !textVal.isString())
+                return; // the text field was invalid so we ignore
+            if (senderVal.isNull() || !senderVal.isString())
+                return; // the sender field was invalid so we ignore
+        emit parse_msg(senderVal.toString(),textVal.toString());
+    }
 }
 

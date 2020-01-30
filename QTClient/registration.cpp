@@ -26,9 +26,7 @@ void Registration::on_Registra_clicked()
         getInfo();
         qDebug() << user;
         if(Signin->reg(user)){
-            qDebug() << user;
-            Signin->waitForReadyRead(100);
-            //implementare ifelse per comunicare se la registrazione è andata a buon fine oppure no
+            QMessageBox::about(this,"Successo","Registrazione andata a buon fine");
             Signin->close();
             this->close();
         }
