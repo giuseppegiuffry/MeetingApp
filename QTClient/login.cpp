@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(give_user(QString)),home,SLOT(receive_user(QString)));
     connect(Client,SIGNAL(readyRead()),this,SLOT(OnReadyRead()));
     connect(this,SIGNAL(parse_msg(QString,QString)),home,SLOT(receive_msg(QString,QString)));
+    connect(home,SIGNAL(revoke_auth()),this,SLOT(revoke_auth()));
 }
 
 MainWindow::~MainWindow()
@@ -108,5 +109,10 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
                 return; // the sender field was invalid so we ignore
         emit parse_msg(senderVal.toString(),textVal.toString());
     }
+}
+
+void MainWindow::revoke_auth()
+{
+    connection_granted = false;
 }
 

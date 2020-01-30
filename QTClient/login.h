@@ -46,6 +46,7 @@ private slots:
     void on_pushButton_2_clicked();
     void json_received(QJsonObject);
     void OnReadyRead();
+    void revoke_auth();
 };
 
 #endif // MAINWINDOW_H

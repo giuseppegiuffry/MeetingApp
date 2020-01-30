@@ -45,3 +45,8 @@ void Home::receive_msg(QString other_user, QString msg){
    ui->com->addItem(message);
    ui->com->scrollToBottom();
 }
+
+void Home::closeEvent(QCloseEvent *event){
+    emit(revoke_auth());
+    QWidget::closeEvent(event);
+}
