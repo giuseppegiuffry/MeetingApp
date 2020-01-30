@@ -19,8 +19,10 @@ Registration::~Registration()
 
 void Registration::on_Registra_clicked()
 {
-    if(ui->Nome->text().isEmpty()==true || ui->Cognome->text().isEmpty()==true || ui->Nick->text().isEmpty()==true || ui->Password->text().isEmpty()==true)
-        QMessageBox::about(this,"Warning","Riempire tutti i campi");
+    if(ui->Nome->text().isEmpty()==true || ui->Cognome->text().isEmpty()==true ||
+            ui->Nick->text().isEmpty()==true || ui->Password->text().isEmpty()==true ||
+            ui->Bio->toPlainText().isEmpty()==true)
+        QMessageBox::critical(this,"Errore","Inserisci tutti i campi!");
     else
     {
         getInfo();

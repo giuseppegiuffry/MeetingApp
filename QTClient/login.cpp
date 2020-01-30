@@ -24,8 +24,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     QString username = ui->username->text();
-    QString password = ui->username->text();
-    if(!username.isEmpty() || !password.isEmpty())
+    QString password = ui->password->text();
+    if(!username.isEmpty() && !password.isEmpty())
     {
         user.insert("login",QJsonValue::fromVariant("login"));
         user.insert("name",QJsonValue::fromVariant(username));
@@ -39,14 +39,14 @@ void MainWindow::on_pushButton_clicked()
             }
             else
             {
-                QMessageBox::about(this,"Errore","Dati Errati");
+                QMessageBox::critical(this,"Errore","Username e/o password errati!");
                 Client->close();
             }
         }
         else QMessageBox::about(this,"Errore","Non Connesso");
         emit(give_user(username));
     }
-    else QMessageBox::about(this,"Errore","Inserire Utente e Password!");
+    else QMessageBox::critical(this,"Errore","Inserire username e/o password!");
 }
 
 void MainWindow::on_pushButton_2_clicked()
