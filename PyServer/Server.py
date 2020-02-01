@@ -69,6 +69,7 @@ def clientThread(connection,client_address):
         else:
             print('\nClient disconnesso')
             del clients[connection.fileno()]
+            del clients_ids[connection.fileno()]
             connection.close()
             break
 

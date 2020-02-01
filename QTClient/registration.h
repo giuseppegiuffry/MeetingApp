@@ -22,11 +22,14 @@ public:
 private slots:
     void on_Registra_clicked();
     void getInfo();
+    void OnReadyRead();
 
 private:
     Ui::Registration *ui;
     socket *Signin = new socket("127.0.0.2",8888);
     QJsonObject user;
+    void JsonArrivato(const QJsonObject &json);
+    bool registration_completed = false;
 };
 
 #endif // REGISTRATION_H

@@ -33,6 +33,7 @@ void MainWindow::on_pushButton_clicked()
         user.insert("password",QJsonValue::fromVariant(password));
         if(Client->connect(user))
         {
+            Client->waitForReadyRead(200);
             if(connection_granted)
             {
                 home->setModal(true);
@@ -114,5 +115,6 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
 void MainWindow::revoke_auth()
 {
     connection_granted = false;
+    Client->close();
 }
 

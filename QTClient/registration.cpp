@@ -9,6 +9,7 @@ Registration::Registration(QWidget *parent) :
     ui(new Ui::Registration)
 {
     ui->setupUi(this);
+    connect(Signin,SIGNAL(readyRead()),this,SLOT(OnReadyRead()));
 }
 
 Registration::~Registration()
@@ -28,9 +29,15 @@ void Registration::on_Registra_clicked()
         getInfo();
         qDebug() << user;
         if(Signin->reg(user)){
-            QMessageBox::about(this,"Successo","Registrazione andata a buon fine");
-            Signin->close();
-            this->close();
+            Signin->waitForReadyRead(200);
+            if(registration_completed == true){
+                QMessageBox::about(this,"Successo","Registrazione andata a buon fine");
+                registration_completed = false;
+                Signin->close();
+                this->close();
+                }
+            else
+                QMessageBox::about(this,"Failed","Registrazione non completata");
         }
         else
             QMessageBox::about(this,"Errore","Non Connesso");
@@ -46,4 +53,36 @@ void Registration::getInfo()
     user.insert("sex",QJsonValue::fromVariant(ui->Sesso->currentText()));
     user.insert("interested",QJsonValue::fromVariant(ui->Interesse->currentText()));
     user.insert("bio",QJsonValue::fromVariant(ui->Bio->toPlainText()));
+}
+
+
+void Registration::OnReadyRead()
+{
+    qDebug() << "sono entrato nella readyread";
+    QByteArray jsonData;
+    QDataStream socketStream(Signin);
+    for (;;) {
+        socketStream.startTransaction();
+        socketStream >> jsonData;
+        if (socketStream.commitTransaction()) {
+            QJsonParseError parseError;
+            const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                if (jsonDoc.isObject())
+                    qDebug() << "json letto correttamente";
+                    JsonArrivato(jsonDoc.object());
+            }
+        } else {
+            qDebug() << "Sono Uscito";
+            break;
+        }
+    }
+}
+
+void Registration::JsonArrivato(const QJsonObject &json)
+{
+    qDebug() << json;
+    if (json.keys().contains("bio")){
+        registration_completed = true;
+    }
 }
