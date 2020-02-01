@@ -3,6 +3,7 @@ import sys
 from threading import Thread
 import json
 import sqlite3
+import difflib
 
 
 def accept_connections():
@@ -44,9 +45,15 @@ def clientThread(connection,client_address):
                     print('\nCredenziali errate')
 
             elif "msg" in jdata:
-                for index, client in enumerate(clients.values()):
+                for client in clients.values():
                     if (client != connection):
-                        client.sendall(data)
+                        other_id = clients_ids[client.fileno()]
+                        c.execute('SELECT bio FROM user WHERE id = "%s"' % other_id)
+                        result = c.fetchone()
+                        other_bio = result[0]
+                        matching(user_bio,other_bio)
+                        if (output >= 60):
+                            client.sendall(data)
                         
             elif "bio" in jdata:
                 print("\nSalvo utente nel database")
@@ -75,6 +82,11 @@ def clientThread(connection,client_address):
 
     connection.close()
 
+def matching(user_bio,other_bio):
+    print("entro in matching")
+    output = int(difflib.SequenceMatcher(None, user_bio, other_bio).ratio()*100)
+    print(output)
+
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server_address = ('127.0.0.2', 8888)
@@ -82,6 +94,7 @@ sock.bind(server_address)
 
 clients = {}
 clients_ids = {}
+output = 0
 
 if __name__ == "__main__":
     sock.listen(5)
