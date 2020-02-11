@@ -163,11 +163,6 @@
      <string>Donna</string>
     </property>
    </item>
-   <item>
-    <property name="text">
-     <string>Preferisco non dichiarare</string>
-    </property>
-   </item>
   </widget>
   <widget class="QComboBox" name="Interesse">
    <property name="geometry">
@@ -213,6 +208,9 @@
      <width>361</width>
      <height>25</height>
     </rect>
+   </property>
+   <property name="echoMode">
+    <enum>QLineEdit::Password</enum>
    </property>
   </widget>
  </widget>

@@ -47,6 +47,7 @@ void Home::receive_msg(QString other_user, QString msg){
 }
 
 void Home::closeEvent(QCloseEvent *event){
+    ui->com->clear();
     emit(revoke_auth());
     QWidget::closeEvent(event);
 }

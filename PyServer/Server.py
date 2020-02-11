@@ -4,6 +4,7 @@ from threading import Thread
 import json
 import sqlite3
 import difflib
+import re
 
 
 def accept_connections():
@@ -36,9 +37,11 @@ def clientThread(connection,client_address):
                 if result:
                     user_id = result[2]
                     clients_ids[connection.fileno()] = user_id
-                    c.execute('SELECT bio FROM user WHERE id = "%s"' % user_id)
+                    c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % user_id)
                     result = c.fetchone()
                     user_bio = result[0]
+                    user_sex = result[1]
+                    user_interest = result[2]
                     print('\nUtente loggato')
                     connection.sendall(data)
                 else:
@@ -48,13 +51,15 @@ def clientThread(connection,client_address):
                 for client in clients.values():
                     if (client != connection):
                         other_id = clients_ids[client.fileno()]
-                        c.execute('SELECT bio FROM user WHERE id = "%s"' % other_id)
+                        c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % other_id)
                         result = c.fetchone()
                         other_bio = result[0]
-                        matching(user_bio,other_bio)
+                        other_sex = result[1]
+                        other_interest = result[2]
+                        output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
+                        print(output)
                         if (output >= 60):
                             client.sendall(data)
-                        
             elif "bio" in jdata:
                 print("\nSalvo utente nel database")
                 user = []
@@ -82,10 +87,12 @@ def clientThread(connection,client_address):
 
     connection.close()
 
-def matching(user_bio,other_bio):
+def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest):
     print("entro in matching")
-    output = int(difflib.SequenceMatcher(None, user_bio, other_bio).ratio()*100)
-    print(output)
+    if((user_sex == other_interest) and (user_interest == other_sex)):
+        return int(difflib.SequenceMatcher(None, user_bio, other_bio).ratio()*100)
+    else:
+        return 0
 
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
