@@ -4,7 +4,9 @@ from threading import Thread
 import json
 import sqlite3
 import difflib
-import re
+import nltk
+from nltk.stem.snowball import SnowballStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 
 def accept_connections():
@@ -89,8 +91,22 @@ def clientThread(connection,client_address):
 
 def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest):
     print("entro in matching")
+    i = 0
+    totale = 0
     if((user_sex == other_interest) and (user_interest == other_sex)):
-        return int(difflib.SequenceMatcher(None, user_bio, other_bio).ratio()*100)
+        user_words=word_tokenize(user_bio)
+        other_words=word_tokenize(other_bio)
+        user_stemmed = []
+        other_stemmed = []
+        for word in user_words:
+            user_stemmed.append(stemmer.stem(word))
+        for word in other_words:
+            other_stemmed.append(stemmer.stem(word))
+        for (a,b) in zip(user_stemmed,other_stemmed):
+            parziale = int(difflib.SequenceMatcher(None, a, b).ratio()*100)
+            i = i + 1
+            totale = totale + parziale
+        return (totale/i)
     else:
         return 0
 
@@ -102,6 +118,7 @@ sock.bind(server_address)
 clients = {}
 clients_ids = {}
 output = 0
+stemmer = SnowballStemmer("italian")
 
 if __name__ == "__main__":
     sock.listen(5)
