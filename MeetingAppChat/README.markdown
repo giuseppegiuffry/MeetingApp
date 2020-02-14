@@ -1,2 +1,0 @@
-# Prova MeetingApp Chat
-
