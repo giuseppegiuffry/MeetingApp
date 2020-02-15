@@ -20,7 +20,8 @@ def accept_connections():
 
 def clientThread(connection,client_address):
     while True:
-        data = connection.recv(1024)
+        data = connection.recv(2048)
+        print(data)
         db = sqlite3.connect('database.db')
         c = db.cursor()
         if data:
@@ -102,8 +103,13 @@ def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
             user_stemmed.append(stemmer.stem(word))
         for word in other_words:
             other_stemmed.append(stemmer.stem(word))
-        for (a,b) in zip(user_stemmed,other_stemmed):
-            parziale = int(difflib.SequenceMatcher(None, a, b).ratio()*100)
+        print(user_stemmed)
+        print(other_stemmed)
+        for a in user_stemmed:
+            for b in other_stemmed:
+                parziale = int(difflib.SequenceMatcher(None, a, b).ratio()*100)
+                if (parziale == 100):
+                    break
             i = i + 1
             totale = totale + parziale
         return (totale/i)
@@ -112,7 +118,7 @@ def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
 
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server_address = ('127.0.0.2', 8888)
+server_address = ('127.0.0.3', 8888)
 sock.bind(server_address)
 
 clients = {}
