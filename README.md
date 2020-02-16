@@ -27,3 +27,15 @@ Si consiglia di utilizzare questo link, in quanto l'installazione dell'ambiente 
 seconda del sistema operativo su cui si sta eseguendo.
 All'interno del programma, aprire il progetto presente nella directory QTClient e chiamato MeetingAppClient.pro
 
+Se si volesse invece eseguire il client da terminale, compilando il codice sorgente e creando un file eseguibile, senza dover installare l'ambiente, si può fare riferimento a questa [guida](https://vitux.com/compiling-your-first-qt-program-in-ubuntu/), che va per bene anche per altri sistemi operativi, oltre a Ubuntu. 
+Nello specifico, i passi da seguire sono gli step 5, 6 e 7 della precedente guida e devono essere eseguiti tutti all'interno della directory QTClient:
+
+```
+cd QTClient
+qmake MeetingAppClient.pro
+make
+./MeetingAppClient
+```
+
+
+
