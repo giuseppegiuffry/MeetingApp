@@ -25,5 +25,5 @@ python Server.py
 Per eseguire il client, qualora non fosse presente, è necessario installare [Qt5](https://doc.qt.io/qt-5/gettingstarted.html).
 Si consiglia di utilizzare questo link, in quanto l'installazione dell'ambiente potrebbe differire in alcuni passaggi, a
 seconda del sistema operativo su cui si sta eseguendo.
-All'interno del programma, aprire il progetto presente nella directory QTClient e chiamato Prova.pro
+All'interno del programma, aprire il progetto presente nella directory QTClient e chiamato MeetingAppClient.pro
 
