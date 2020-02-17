@@ -18,7 +18,7 @@ Registration::~Registration()
 }
 
 
-void Registration::on_Registra_clicked()
+void Registration::on_registratiButton_clicked()
 {
     if(ui->Nome->text().isEmpty()==true || ui->Cognome->text().isEmpty()==true ||
             ui->Nick->text().isEmpty()==true || ui->Password->text().isEmpty()==true ||
@@ -58,7 +58,7 @@ void Registration::getInfo()
 
 void Registration::OnReadyRead()
 {
-    qDebug() << "sono entrato nella readyread";
+    qDebug() << "Sono entrato nella readyread";
     QByteArray jsonData;
     QDataStream socketStream(Signin);
     for (;;) {
@@ -69,11 +69,11 @@ void Registration::OnReadyRead()
             const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 if (jsonDoc.isObject())
-                    qDebug() << "json letto correttamente";
+                    qDebug() << "Json letto correttamente";
                     JsonArrivato(jsonDoc.object());
             }
         } else {
-            qDebug() << "Sono Uscito";
+            qDebug() << "Sono uscito";
             break;
         }
     }

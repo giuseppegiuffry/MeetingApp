@@ -21,11 +21,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
-    void on_pushButton_clicked();
-
-    void on_actionExit_triggered();
-
 private:
     Ui::MainWindow *ui;
     socket *Client = new socket("127.0.0.3",8888);
@@ -43,7 +38,9 @@ signals:
 
 private slots:
     void manda(QJsonObject msg);
-    void on_pushButton_2_clicked();
+    void on_loginButton_clicked();
+    void on_registerButton_clicked();
+    void on_actionExit_triggered();
     void json_received(QJsonObject);
     void OnReadyRead();
     void revoke_auth();

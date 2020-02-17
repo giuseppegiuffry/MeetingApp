@@ -20,7 +20,7 @@ public:
     ~Registration();
 
 private slots:
-    void on_Registra_clicked();
+    void on_registratiButton_clicked();
     void getInfo();
     void OnReadyRead();
 

@@ -21,7 +21,6 @@ def accept_connections():
 def clientThread(connection,client_address):
     while True:
         data = connection.recv(2048)
-        print(data)
         db = sqlite3.connect('database.db')
         c = db.cursor()
         if data:
@@ -34,10 +33,10 @@ def clientThread(connection,client_address):
                 account.append(jdata.get("name"))
                 account.append(jdata.get("password"))
                 c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
-                result = c.fetchone() #prendo il risultato del fetch e vedo se non è nullo 
-                print(result)
+                result = c.fetchone()
 
                 if result:
+                    print(result)
                     user_id = result[2]
                     clients_ids[connection.fileno()] = user_id
                     c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % user_id)
@@ -60,7 +59,7 @@ def clientThread(connection,client_address):
                         other_sex = result[1]
                         other_interest = result[2]
                         output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
-                        print(output)
+                        print("Valore di match: " + str(output))
                         if (output >= 60):
                             client.sendall(data)
             elif "bio" in jdata:
@@ -91,7 +90,7 @@ def clientThread(connection,client_address):
     connection.close()
 
 def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest):
-    print("entro in matching")
+    print("\nEntro in matching")
     i = 0
     totale = 0
     if((user_sex == other_interest) and (user_interest == other_sex)):

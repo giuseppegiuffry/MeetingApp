@@ -9,7 +9,7 @@ socket::socket(QString ind, uint16_t port)
 bool socket::connect(QJsonObject user){
     connectToHost(indirizzo,porta);
     if (waitForConnected(1000)){
-        qDebug() << "connesso";
+        qDebug() << "Connesso";
         QDataStream clientstream(this);
         clientstream << QJsonDocument(user).toJson(QJsonDocument::Compact);
         return true;
@@ -17,24 +17,24 @@ bool socket::connect(QJsonObject user){
     }
     else {
         return false;
-        qDebug() << "non connesso";
+        qDebug() << "Non connesso";
     }
 }
 
 void socket::send(QJsonObject msg){
     QDataStream clientstream(this);
     clientstream << QJsonDocument(msg).toJson(QJsonDocument::Compact);
-    qDebug() << "dovrei mandare un msg";
+    qDebug() << "Dovrei mandare un msg";
 }
 
 bool socket::reg(QJsonObject user){
     connectToHost(indirizzo,porta);
     if(waitForConnected())
     {
-    qDebug() << "connesso";
+    qDebug() << "Connesso";
     QDataStream clientstream(this);
     clientstream << QJsonDocument(user).toJson(QJsonDocument::Compact);
-    qDebug() << "dovrei mandare un Json al server";
+    qDebug() << "Dovrei mandare un Json al server";
     return true;
     }
     else return false;

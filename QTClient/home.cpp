@@ -13,7 +13,7 @@ Home::~Home()
     delete ui;
 }
 
-void Home::on_pushButton_clicked()
+void Home::on_sendButton_clicked()
 {
     QString message = ui->msg->text();
     ui->msg->clear();
@@ -24,7 +24,6 @@ void Home::on_pushButton_clicked()
         JsonMsg.insert("msg",QJsonValue::fromVariant(message));
         emit(send_msg(JsonMsg));
 
-        // allineo a destra il messaggio che mando
         QListWidgetItem *messageItem = new QListWidgetItem(nome_mittente + ": " + message);
         ui->com->addItem(messageItem);
         messageItem->setTextAlignment(Qt::AlignRight);

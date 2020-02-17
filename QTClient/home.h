@@ -6,8 +6,6 @@
 #include "QJsonDocument"
 #include "QJsonObject"
 
-
-
 namespace Ui {
 class Home;
 }
@@ -21,6 +19,8 @@ public:
     ~Home();
 
 private:
+    Ui::Home *ui;
+    QJsonObject JsonMsg;
     QString nome_mittente;
     QString other_user;
     void closeEvent(QCloseEvent *bar);
@@ -30,15 +30,12 @@ public slots:
     void receive_msg(QString other_user, QString msg);
 
 private slots:
-    void on_pushButton_clicked();
+    void on_sendButton_clicked();
 
 signals:
     void send_msg(QJsonObject);
     void revoke_auth();
 
-private:
-    Ui::Home *ui;
-    QJsonObject JsonMsg;
 };
 
 #endif // HOME_H

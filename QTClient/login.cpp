@@ -22,7 +22,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_loginButton_clicked()
 {
     QString username = ui->username->text();
     QString password = ui->password->text();
@@ -51,7 +51,7 @@ void MainWindow::on_pushButton_clicked()
     else QMessageBox::critical(this,"Errore","Inserire username e/o password!");
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_registerButton_clicked()
 {
     registation->setModal(true);
     registation->show();
@@ -74,7 +74,7 @@ void MainWindow::json_received(QJsonObject msg)
 
 void MainWindow::OnReadyRead()
 {
-    qDebug() << "sono entrato nella readyread";
+    qDebug() << "Sono entrato nella readyread";
     QByteArray jsonData;
     QDataStream socketStream(Client);
     for (;;) {
@@ -85,11 +85,11 @@ void MainWindow::OnReadyRead()
             const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 if (jsonDoc.isObject())
-                    qDebug() << "json letto correttamente";
+                    qDebug() << "Json letto correttamente";
                     JsonArrivato(jsonDoc.object());
             }
         } else {
-            qDebug() << "Sono Uscito";
+            qDebug() << "Sono uscito";
             break;
         }
     }
@@ -105,9 +105,9 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
         const QJsonValue textVal = json.value(QLatin1String("msg"));
         const QJsonValue senderVal = json.value(QLatin1String("user_name"));
             if (textVal.isNull() || !textVal.isString())
-                return; // the text field was invalid so we ignore
+                return;
             if (senderVal.isNull() || !senderVal.isString())
-                return; // the sender field was invalid so we ignore
+                return;
         emit parse_msg(senderVal.toString(),textVal.toString());
     }
 }
