@@ -21,6 +21,7 @@ public:
 private:
     Ui::Home *ui;
     QJsonObject JsonMsg;
+    QJsonObject Rematch;
     QString nome_mittente;
     QString other_user;
     void closeEvent(QCloseEvent *bar);
@@ -31,6 +32,8 @@ public slots:
 
 private slots:
     void on_sendButton_clicked();
+
+    void on_pushButton_clicked();
 
 signals:
     void send_msg(QJsonObject);

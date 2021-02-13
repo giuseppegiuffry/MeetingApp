@@ -19,75 +19,113 @@ def accept_connections():
 
 
 def clientThread(connection,client_address):
-    while True:
-        data = connection.recv(2048)
-        db = sqlite3.connect('database.db')
-        c = db.cursor()
-        if data:
-            temp = data.decode("utf-8")
-            temp = temp[4:]
-            jdata = json.loads(temp)
-            print('\nMessaggio ricevuto: \n{}'.format(data.decode("utf-8")))
-            if "login" in jdata:
-                account = []
-                account.append(jdata.get("name"))
-                account.append(jdata.get("password"))
-                c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
-                result = c.fetchone()
+    try:
+        while True:
+            data = connection.recv(2048)
+            db = sqlite3.connect('database.db')
+            c = db.cursor()
+            if data:
+                temp = data.decode("Latin")
+                print(temp)
+                temp = temp[4:]
+                jdata = json.loads(temp)
+                print('\nMessaggio ricevuto: \n{}'.format(data.decode("Latin")))
 
-                if result:
-                    print(result)
-                    user_id = result[2]
-                    clients_ids[connection.fileno()] = user_id
-                    c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % user_id)
+                if "login" in jdata:
+                    account = []
+                    account.append(jdata.get("name"))
+                    account.append(jdata.get("password"))
+                    c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
                     result = c.fetchone()
-                    user_bio = result[0]
-                    user_sex = result[1]
-                    user_interest = result[2]
-                    print('\nUtente loggato')
-                    connection.sendall(data)
-                else:
-                    print('\nCredenziali errate')
 
-            elif "msg" in jdata:
-                for client in clients.values():
-                    if (client != connection):
-                        other_id = clients_ids[client.fileno()]
-                        c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % other_id)
+                    if result:
+                        user_id = result[2]
+                        clients_ids[connection.fileno()] = user_id
+                        c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % user_id)
                         result = c.fetchone()
-                        other_bio = result[0]
-                        other_sex = result[1]
-                        other_interest = result[2]
-                        output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
-                        print("Valore di match: " + str(output))
-                        if (output >= 60):
-                            client.sendall(data)
-            elif "bio" in jdata:
-                print("\nSalvo utente nel database")
-                user = []
-                account = []
-                user.append(jdata.get("name"))
-                user.append(jdata.get("surname"))
-                user.append(jdata.get("sex"))
-                user.append(jdata.get("interested"))
-                user.append(jdata.get("bio"))
-                account.append(jdata.get("nickname"))
-                account.append(jdata.get("password"))
-                c.execute('INSERT INTO user(name,surname,sex,interested,bio) VALUES (?,?,?,?,?)', user)
-                c.execute('INSERT INTO account(username,password) VALUES(?,?)', account)
-                db.commit()
-                connection.sendall(data)
+                        user_bio = result[0]
+                        user_sex = result[1]
+                        user_interest = result[2]
+                        print('\nUtente loggato')
+                        connection.sendall(data)
+                        matched_client = 0
+                        max_output = 0
+                        alredy_matched = False
+                        matched = False
+                        for client in clients.values():
+                            if (client != connection):
+                                other_id = clients_ids[client.fileno()]
+                                c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % other_id)
+                                result = c.fetchone()
+                                other_bio = result[0]
+                                other_sex = result[1]
+                                other_interest = result[2]
+                                output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
+                                print("Valore di match: " + str(output))
+                                if (max_output < output and output > 60):
+                                    for key in match_pattern.keys():
+                                        if key == client:
+                                            alredy_matched = True
+                                    if (alredy_matched == True):
+                                        print("Questo utente è già occupato")
+                                    else:
+                                        max_output = output
+                                        matched_client = client
+                                        matched = True
+                        if (matched == True):
+                            match_pattern[connection] = matched_client
+                            match_pattern[matched_client] = connection
+                    else:
+                        print('\nCredenziali errate')
+
+                elif "msg" in jdata:
+                    for key in match_pattern.keys():
+                        if key == connection:
+                            match_pattern[key].sendall(data)
+                            matched_client = match_pattern[key]
+                        
+                elif "bio" in jdata:
+                    print("\nSalvo utente nel database")
+                    user = []
+                    account = []
+                    user.append(jdata.get("name"))
+                    user.append(jdata.get("surname"))
+                    user.append(jdata.get("sex"))
+                    user.append(jdata.get("interested"))
+                    user.append(jdata.get("bio"))
+                    account.append(jdata.get("nickname"))
+                    account.append(jdata.get("password"))
+                    c.execute('INSERT INTO user(name,surname,sex,interested,bio) VALUES (?,?,?,?,?)', user)
+                    c.execute('INSERT INTO account(username,password) VALUES(?,?)', account)
+                    db.commit()
+                    connection.sendall(data)
+                elif "rematch" in jdata:
+                    print("hello")
+                else:
+                    print("\nMessaggio non riconosciuto")
+
             else:
-                print("\nMessaggio non riconosciuto")
+                print('\nClient disconnesso')
+                for key in match_pattern.keys():
+                    if key == connection:
+                        match_pattern.pop(key)
+                        match_pattern.pop(matched_client)
+                        break
+                del clients[connection.fileno()]
+                del clients_ids[connection.fileno()]
+                connection.close()
+                break
 
-        else:
-            print('\nClient disconnesso')
-            del clients[connection.fileno()]
-            del clients_ids[connection.fileno()]
-            connection.close()
-            break
-
-    connection.close()
+        connection.close()
+    except KeyError as e:
+        print("Errore nella chiave del dict")
+        print(e)
+    except RuntimeError as e:
+        print("Errore Runtime")
+        print(e)
+    except Exception as e:
+        print("Qualcosa è andato storto")
+        print(e)
 
 def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest):
     print("\nEntro in matching")
@@ -117,12 +155,12 @@ def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
 
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server_address = ('127.0.0.3', 8888)
+server_address = ('127.0.0.1', 8888)
 sock.bind(server_address)
 
 clients = {}
 clients_ids = {}
-output = 0
+match_pattern = {}
 stemmer = SnowballStemmer("italian")
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>479</width>
     <height>300</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>11</y>
-     <width>381</width>
+     <width>461</width>
      <height>251</height>
     </rect>
    </property>
@@ -44,6 +44,19 @@
    </property>
    <property name="text">
     <string>Invia</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>270</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Rematch</string>
    </property>
   </widget>
  </widget>

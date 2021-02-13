@@ -116,5 +116,7 @@ void MainWindow::revoke_auth()
 {
     connection_granted = false;
     Client->close();
+    ui->username->clear();
+    ui->password->clear();
 }
 

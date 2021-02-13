@@ -46,7 +46,16 @@ void Home::receive_msg(QString other_user, QString msg){
 }
 
 void Home::closeEvent(QCloseEvent *event){
+    JsonMsg.insert("user_name",QJsonValue::fromVariant(nome_mittente));
+    JsonMsg.insert("msg",QJsonValue::fromVariant("Utente Disconnesso"));
+    emit(send_msg(JsonMsg));
     ui->com->clear();
     emit(revoke_auth());
     QWidget::closeEvent(event);
+}
+
+void Home::on_pushButton_clicked()
+{
+    Rematch.insert("rematch",QJsonValue::fromVariant("Sei Stato Matchato"));
+    emit(send_msg(Rematch));
 }
