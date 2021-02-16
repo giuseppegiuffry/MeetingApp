@@ -26,7 +26,6 @@ def clientThread(connection,client_address):
             c = db.cursor()
             if data:
                 temp = data.decode("Latin")
-                print(temp)
                 temp = temp[4:]
                 jdata = json.loads(temp)
                 print('\nMessaggio ricevuto: \n{}'.format(data.decode("Latin")))
@@ -50,31 +49,11 @@ def clientThread(connection,client_address):
                         connection.sendall(data)
                         matched_client = 0
                         max_output = 0
+                        black_list = []
                         alredy_matched = False
                         matched = False
-                        for client in clients.values():
-                            if (client != connection):
-                                other_id = clients_ids[client.fileno()]
-                                c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % other_id)
-                                result = c.fetchone()
-                                other_bio = result[0]
-                                other_sex = result[1]
-                                other_interest = result[2]
-                                output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
-                                print("Valore di match: " + str(output))
-                                if (max_output < output and output > 60):
-                                    for key in match_pattern.keys():
-                                        if key == client:
-                                            alredy_matched = True
-                                    if (alredy_matched == True):
-                                        print("Questo utente è già occupato")
-                                    else:
-                                        max_output = output
-                                        matched_client = client
-                                        matched = True
-                        if (matched == True):
-                            match_pattern[connection] = matched_client
-                            match_pattern[matched_client] = connection
+                        init_matching(connection,user_bio,user_sex,user_interest,matched_client,
+                                      max_output,black_list,alredy_matched,matched,c)
                     else:
                         print('\nCredenziali errate')
 
@@ -99,8 +78,25 @@ def clientThread(connection,client_address):
                     c.execute('INSERT INTO account(username,password) VALUES(?,?)', account)
                     db.commit()
                     connection.sendall(data)
+
                 elif "rematch" in jdata:
-                    print("hello")
+                    black_listed = False
+                    for key in match_pattern.keys():
+                        if key == connection:
+                            match_pattern.pop(key)
+                            match_pattern.pop(matched_client)
+                            black_list.append(matched_client)
+                            black_listed = True
+                            print(match_pattern)
+                            break
+                    if (black_listed == True):
+                        init_matching(connection,user_bio,user_sex,user_interest,matched_client,
+                                  max_output,black_list,alredy_matched,matched,c)
+                    else:
+                        init_matching(connection,user_bio,user_sex,user_interest,matched_client,
+                                      max_output,black_list,alredy_matched,matched,c)
+                    
+
                 else:
                     print("\nMessaggio non riconosciuto")
 
@@ -117,9 +113,11 @@ def clientThread(connection,client_address):
                 break
 
         connection.close()
+
     except KeyError as e:
-        print("Errore nella chiave del dict")
+        print("Errore Chiave nel dict")
         print(e)
+
     except RuntimeError as e:
         print("Errore Runtime")
         print(e)
@@ -153,9 +151,36 @@ def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
     else:
         return 0
 
+def init_matching(connection,user_bio,user_sex,user_interest,matched_client,
+                                      max_output,black_list,alredy_matched,matched,c):
+    for client in clients.values():
+        if (client != connection and client not in black_list):
+            other_id = clients_ids[client.fileno()]
+            c.execute('SELECT bio,sex,interested FROM user WHERE id = "%s"' % other_id)
+            result = c.fetchone()
+            other_bio = result[0]
+            other_sex = result[1]
+            other_interest = result[2]
+            output = matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
+            print("Valore di match: " + str(output))
+            if (max_output < output and output > 60):
+                for key in match_pattern.keys():
+                    if key == client:
+                        alredy_matched = True
+                if (alredy_matched == True):
+                    print("Questo utente è già occupato")
+                else:
+                    max_output = output
+                    matched_client = client
+                    matched = True
+    if (matched == True):
+        print("matched")
+        match_pattern[connection] = matched_client
+        print("qui")
+        match_pattern[matched_client] = connection
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server_address = ('127.0.0.1', 8888)
+server_address = ('127.0.0.2', 8888)
 sock.bind(server_address)
 
 clients = {}
