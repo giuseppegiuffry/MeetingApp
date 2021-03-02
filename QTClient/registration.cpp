@@ -24,6 +24,9 @@ void Registration::on_registratiButton_clicked()
             ui->Nick->text().isEmpty()==true || ui->Password->text().isEmpty()==true ||
             ui->Bio->toPlainText().isEmpty()==true)
         QMessageBox::critical(this,"Errore","Inserisci tutti i campi!");
+    else if(ui->Bio->toPlainText().length() < 50){
+        QMessageBox::critical(this,"Errore","Inserisci almeno 50 caratteri nella biografia");
+    }
     else
     {
         getInfo();
@@ -35,6 +38,11 @@ void Registration::on_registratiButton_clicked()
                 registration_completed = false;
                 Signin->close();
                 this->close();
+                ui->Nome->text().clear();
+                ui->Cognome->text().clear();
+                ui->Nick->text().clear();
+                ui->Password->text().clear();
+                ui->Bio->toPlainText().clear();
                 }
             else
                 QMessageBox::about(this,"Failed","Registrazione non completata");

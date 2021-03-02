@@ -110,6 +110,9 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
                 return;
         emit parse_msg(senderVal.toString(),textVal.toString());
     }
+    if (json.keys().contains("rematch")){
+        emit parse_msg("Sistema","Utente Disconnesso");
+    }
 }
 
 void MainWindow::revoke_auth()

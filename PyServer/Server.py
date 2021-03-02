@@ -80,6 +80,10 @@ def clientThread(connection,client_address):
                     connection.sendall(data)
 
                 elif "rematch" in jdata:
+                    for key in match_pattern.keys():
+                        if key == connection:
+                            match_pattern[key].sendall(data)
+
                     black_listed = False
                     for key in match_pattern.keys():
                         if key == connection:
@@ -104,6 +108,8 @@ def clientThread(connection,client_address):
                 print('\nClient disconnesso')
                 for key in match_pattern.keys():
                     if key == connection:
+                        if(matched_client == 0):
+                            matched_client = match_pattern[key]
                         match_pattern.pop(key)
                         match_pattern.pop(matched_client)
                         break
@@ -176,7 +182,6 @@ def init_matching(connection,user_bio,user_sex,user_interest,matched_client,
     if (matched == True):
         print("matched")
         match_pattern[connection] = matched_client
-        print("qui")
         match_pattern[matched_client] = connection
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

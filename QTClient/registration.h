@@ -26,7 +26,7 @@ private slots:
 
 private:
     Ui::Registration *ui;
-    socket *Signin = new socket("127.0.0.1",8888);
+    socket *Signin = new socket("127.0.0.2",8888);
     QJsonObject user;
     void JsonArrivato(const QJsonObject &json);
     bool registration_completed = false;
