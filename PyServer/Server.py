@@ -36,7 +36,6 @@ def clientThread(connection,client_address):
                     account.append(jdata.get("password"))
                     c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
                     result = c.fetchone()
-
                     if result:
                         user_id = result[2]
                         clients_ids[connection.fileno()] = user_id
@@ -47,15 +46,18 @@ def clientThread(connection,client_address):
                         user_interest = result[2]
                         print('\nUtente loggato')
                         connection.sendall(data)
-                        matched_client = 0
-                        max_output = 0
-                        black_list = []
-                        alredy_matched = False
-                        matched = False
-                        init_matching(connection,user_bio,user_sex,user_interest,matched_client,
-                                      max_output,black_list,alredy_matched,matched,c)
                     else:
                         print('\nCredenziali errate')
+
+                elif "hello" in jdata:
+                    hello_msg = data
+                    matched_client = 0
+                    max_output = 0
+                    black_list = []
+                    alredy_matched = False
+                    matched = False
+                    init_matching(connection,user_bio,user_sex,user_interest,matched_client,
+                                  max_output,black_list,alredy_matched,matched,c,hello_msg)
 
                 elif "msg" in jdata:
                     for key in match_pattern.keys():
@@ -95,10 +97,10 @@ def clientThread(connection,client_address):
                             break
                     if (black_listed == True):
                         init_matching(connection,user_bio,user_sex,user_interest,matched_client,
-                                  max_output,black_list,alredy_matched,matched,c)
+                                  max_output,black_list,alredy_matched,matched,c,hello_msg)
                     else:
                         init_matching(connection,user_bio,user_sex,user_interest,matched_client,
-                                      max_output,black_list,alredy_matched,matched,c)
+                                      max_output,black_list,alredy_matched,matched,c,hello_msg)
                     
 
                 else:
@@ -158,7 +160,7 @@ def matching(user_bio,user_sex,user_interest,other_bio,other_sex,other_interest)
         return 0
 
 def init_matching(connection,user_bio,user_sex,user_interest,matched_client,
-                                      max_output,black_list,alredy_matched,matched,c):
+                                      max_output,black_list,alredy_matched,matched,c,hello_msg):
     for client in clients.values():
         if (client != connection and client not in black_list):
             other_id = clients_ids[client.fileno()]
@@ -183,6 +185,8 @@ def init_matching(connection,user_bio,user_sex,user_interest,matched_client,
         print("matched")
         match_pattern[connection] = matched_client
         match_pattern[matched_client] = connection
+        connection.sendall(hello_msg)
+        matched_client.sendall(hello_msg)
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server_address = ('127.0.0.2', 8888)

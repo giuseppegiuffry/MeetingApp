@@ -27,6 +27,7 @@ private:
     Home *home = new Home();
     Registration *registation = new Registration();
     QJsonObject user;
+    QJsonObject hello;
     void JsonArrivato(const QJsonObject &json);
     const QString login = "login";
     const QString msg = "msg";

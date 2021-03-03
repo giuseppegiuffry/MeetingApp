@@ -29,6 +29,7 @@ void MainWindow::on_loginButton_clicked()
     if(!username.isEmpty() && !password.isEmpty())
     {
         user.insert("login",QJsonValue::fromVariant("login"));
+        hello.insert("hello",QJsonValue::fromVariant("Sei stato machato!"));
         user.insert("name",QJsonValue::fromVariant(username));
         user.insert("password",QJsonValue::fromVariant(password));
         if(Client->connect(user))
@@ -38,6 +39,7 @@ void MainWindow::on_loginButton_clicked()
             {
                 home->setModal(true);
                 home->show();
+                Client->send(hello);
             }
             else
             {
@@ -112,6 +114,9 @@ void MainWindow::JsonArrivato(const QJsonObject &json)
     }
     if (json.keys().contains("rematch")){
         emit parse_msg("Sistema","Utente Disconnesso");
+    }
+    if (json.keys().contains("hello")){
+        emit (parse_msg("Sistema","Sei stato matchato!"));
     }
 }
 
