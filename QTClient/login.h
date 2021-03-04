@@ -6,6 +6,7 @@
 #include "QtGlobal"
 #include "home.h"
 #include "registration.h"
+#include "del.h"
 #include "QJsonDocument"
 #include "QJsonObject"
 
@@ -26,6 +27,7 @@ private:
     socket *Client = new socket("127.0.0.2",8888);
     Home *home = new Home();
     Registration *registation = new Registration();
+    del *Del = new del();
     QJsonObject user;
     QJsonObject hello;
     void JsonArrivato(const QJsonObject &json);
@@ -45,6 +47,7 @@ private slots:
     void json_received(QJsonObject);
     void OnReadyRead();
     void revoke_auth();
+    void on_deleteButton_clicked();
 };
 
 #endif // MAINWINDOW_H

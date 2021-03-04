@@ -109,7 +109,19 @@ def clientThread(connection,client_address):
                         init_matching(connection,user_bio,user_sex,user_interest,matched_client,
                                       max_output,black_list,alredy_matched,matched,c,hello_msg)
                         threadLock.release()
-                    
+                
+                elif "delete" in jdata:
+                    account = []
+                    account.append(jdata.get("name"))
+                    account.append(jdata.get("password"))
+                    c.execute('SELECT * FROM account WHERE username = ? AND password = ?',account)
+                    result = c.fetchone()
+                    if result:
+                        user_id = result[2]
+                        c.execute('DELETE FROM user WHERE id=?',(user_id,))
+                        c.execute('DELETE FROM account WHERE id=?',(user_id,))
+                        db.commit()
+                        connection.sendall(data)
 
                 else:
                     print("\nMessaggio non riconosciuto")
@@ -137,6 +149,7 @@ def clientThread(connection,client_address):
     except RuntimeError as e:
         print("Errore Runtime")
         print(e)
+
     except Exception as e:
         print("Qualcosa è andato storto")
         print(e)

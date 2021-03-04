@@ -128,3 +128,9 @@ void MainWindow::revoke_auth()
     ui->password->clear();
 }
 
+
+void MainWindow::on_deleteButton_clicked()
+{
+    Del->setModal(true);
+    Del->show();
+}
