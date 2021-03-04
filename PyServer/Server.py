@@ -1,6 +1,6 @@
 import socket
 import sys
-from threading import Thread
+from threading import Thread, Lock
 import json
 import sqlite3
 import difflib
@@ -56,8 +56,10 @@ def clientThread(connection,client_address):
                     black_list = []
                     alredy_matched = False
                     matched = False
+                    threadLock.acquire()
                     init_matching(connection,user_bio,user_sex,user_interest,matched_client,
                                   max_output,black_list,alredy_matched,matched,c,hello_msg)
+                    threadLock.release()
 
                 elif "msg" in jdata:
                     for key in match_pattern.keys():
@@ -89,6 +91,8 @@ def clientThread(connection,client_address):
                     black_listed = False
                     for key in match_pattern.keys():
                         if key == connection:
+                            if(matched_client == 0):
+                                matched_client = match_pattern[key]
                             match_pattern.pop(key)
                             match_pattern.pop(matched_client)
                             black_list.append(matched_client)
@@ -96,11 +100,15 @@ def clientThread(connection,client_address):
                             print(match_pattern)
                             break
                     if (black_listed == True):
+                        threadLock.acquire()
                         init_matching(connection,user_bio,user_sex,user_interest,matched_client,
                                   max_output,black_list,alredy_matched,matched,c,hello_msg)
+                        threadLock.release()
                     else:
+                        threadLock.acquire()
                         init_matching(connection,user_bio,user_sex,user_interest,matched_client,
                                       max_output,black_list,alredy_matched,matched,c,hello_msg)
+                        threadLock.release()
                     
 
                 else:
@@ -200,6 +208,7 @@ stemmer = SnowballStemmer("italian")
 if __name__ == "__main__":
     sock.listen(5)
     print("In attesa di connessioni...")
+    threadLock = Lock()
     thread_connessioni = Thread(target=accept_connections)
     thread_connessioni.start()
     thread_connessioni.join()
